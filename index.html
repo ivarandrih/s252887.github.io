@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing & Customer Acquisition</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0f11;
+  --surface: #16181c;
+  --surface2: #1d2026;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0ede8;
+  --muted: #7a7d85;
+  --accent: #c8f060;
+  --accent-dim: rgba(200,240,96,0.12);
+  --red: #ff5f57;
+  --red-dim: rgba(255,95,87,0.12);
+  --amber: #ffb347;
+  --amber-dim: rgba(255,179,71,0.12);
+  --teal: #5dd9c1;
+  --teal-dim: rgba(93,217,193,0.1);
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+body{min-height:100vh;padding:0}
+
+/* noise overlay */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:0}
+
+.wrapper{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* SCREENS */
+.screen{display:none;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.display{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;color:var(--text);margin-bottom:.75rem}
+.display em{font-style:italic;color:var(--accent)}
+h2{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--text);margin-bottom:1rem;font-weight:400}
+h3{font-size:.8rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+p{color:var(--muted);line-height:1.7;margin-bottom:.75rem}
+.mono{font-family:'DM Mono',monospace}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.card-tight{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:.6rem}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:10px 22px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .18s}
+.btn:hover{background:var(--surface2);border-color:var(--border2)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#0a0a0a;border-color:var(--accent);font-weight:600}
+.btn-primary:hover{background:#d4f470;border-color:#d4f470}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.25rem}
+
+/* PROGRESS */
+.progress-wrap{background:var(--surface2);border-radius:99px;height:6px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* METRICS ROW */
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem;margin-bottom:1.5rem}
+@media(max-width:540px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric{background:var(--surface2);border-radius:var(--radius);padding:1rem;text-align:center}
+.metric .mlabel{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.metric .mval{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;color:var(--text)}
+.metric .mval.good{color:var(--accent)}
+.metric .mval.bad{color:var(--red)}
+.metric .mval.warn{color:var(--amber)}
+
+/* ROUND DOTS */
+.round-dots{display:flex;gap:5px;margin-bottom:1.5rem}
+.rdot{width:8px;height:8px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);transition:all .2s}
+.rdot.done{background:var(--teal);border-color:var(--teal)}
+.rdot.current{background:var(--accent);border-color:var(--accent);transform:scale(1.3)}
+
+/* AUDIENCE */
+.audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:.5rem}
+@media(max-width:500px){.audience-grid{grid-template-columns:1fr}}
+.aud-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;transition:all .18s}
+.aud-card:hover{border-color:var(--border2)}
+.aud-card.selected{border-color:var(--accent);background:var(--accent-dim)}
+.aud-name{font-weight:600;font-size:.9rem;color:var(--text);margin-bottom:.2rem}
+.aud-desc{font-size:.75rem;color:var(--muted)}
+
+/* CHANNELS */
+.ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+@media(max-width:560px){.ch-grid{grid-template-columns:1fr}}
+.ch-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;transition:border-color .18s}
+.ch-card.locked{opacity:.3;pointer-events:none}
+.ch-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem}
+.ch-name{font-weight:500;font-size:.85rem;color:var(--text)}
+.ch-cost{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace}
+.badge-new{display:inline-block;background:var(--accent-dim);color:var(--accent);font-size:.65rem;font-weight:600;letter-spacing:.05em;padding:1px 6px;border-radius:4px;margin-left:5px;text-transform:uppercase}
+.badge-sat{display:inline-block;background:var(--amber-dim);color:var(--amber);font-size:.65rem;font-weight:600;padding:1px 6px;border-radius:4px;margin-left:5px}
+
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--border2);outline:none;cursor:pointer;margin:6px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.ch-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}
+.ch-val{font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;color:var(--accent);text-align:right;min-width:50px}
+
+.budget-footer{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0 0;border-top:1px solid var(--border);margin-top:.25rem}
+.budget-label-txt{font-size:.8rem;color:var(--muted)}
+.budget-amount{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500}
+.budget-amount.ok{color:var(--accent)}
+.budget-amount.warn{color:var(--amber)}
+.budget-amount.over{color:var(--red)}
+
+/* FEEDBACK */
+.fb-box{border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:.7rem;border:1px solid}
+.fb-box.success{background:var(--accent-dim);border-color:rgba(200,240,96,.25)}
+.fb-box.warn{background:var(--amber-dim);border-color:rgba(255,179,71,.2)}
+.fb-box.danger{background:var(--red-dim);border-color:rgba(255,95,87,.2)}
+.fb-title{font-weight:600;font-size:.85rem;margin-bottom:.3rem}
+.fb-box.success .fb-title{color:var(--accent)}
+.fb-box.warn .fb-title{color:var(--amber)}
+.fb-box.danger .fb-title{color:var(--red)}
+.fb-box p{font-size:.82rem;margin:0;color:var(--muted)}
+
+/* RESULTS */
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem}
+@media(max-width:500px){.res-grid{grid-template-columns:1fr 1fr}}
+.res-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem;text-align:center}
+.res-name{font-size:.7rem;color:var(--muted);margin-bottom:.25rem}
+.res-val{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--text)}
+.res-sub{font-size:.68rem;color:var(--muted);margin-top:.15rem}
+.fit-great{color:var(--accent)}
+.fit-ok{color:var(--amber)}
+.fit-poor{color:var(--red)}
+
+.insight-box{background:var(--surface2);border-radius:var(--radius);padding:.75rem 1rem;font-size:.78rem;color:var(--muted);margin-top:.5rem;border:1px solid var(--border)}
+
+/* HISTORY */
+.hist-row{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--muted);margin-bottom:.35rem}
+.hist-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* MILESTONES */
+.milestone-tag{display:inline-block;background:var(--teal-dim);color:var(--teal);border:1px solid rgba(93,217,193,.25);border-radius:4px;font-size:.72rem;font-weight:500;padding:3px 10px;margin:3px 3px 0 0}
+
+/* END SCREEN */
+.end-stat{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.end-stat:last-child{border-bottom:none}
+.end-stat .ekey{color:var(--muted)}
+.end-stat .eval{font-family:'DM Mono',monospace;font-weight:500;color:var(--text)}
+.insight-li{font-size:.82rem;color:var(--muted);padding:.5rem 0;border-bottom:1px solid var(--border);line-height:1.6}
+.insight-li:last-child{border-bottom:none}
+.insight-li::before{content:'→ ';color:var(--accent)}
+
+/* INTRO DECORATION */
+.intro-tag{display:inline-block;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(200,240,96,.2);border-radius:4px;font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;margin-bottom:1rem}
+.how-step{display:flex;gap:.75rem;margin-bottom:.6rem;align-items:flex-start}
+.step-num{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);background:var(--accent-dim);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+.step-text{font-size:.85rem;color:var(--muted);line-height:1.5}
+.divider{height:1px;background:var(--border);margin:1.5rem 0}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- INTRO -->
+<div id="screen-intro" class="screen active">
+  <div style="margin-bottom:2.5rem">
+    <div class="intro-tag">38106 · Group 61 · 2026</div>
+    <div class="display">Marketing &amp; <em>Customer Acquisition</em></div>
+    <p style="font-size:.95rem;max-width:540px">You're the head of marketing at a high-growth startup. Reach <strong style="color:var(--text)">5,000 paying customers</strong> in 8 rounds without burning through budget or letting CAC exceed LTV.</p>
+  </div>
+  <div class="card">
+    <h3>How to play</h3>
+    <div class="how-step"><div class="step-num">1</div><div class="step-text">Select your <strong style="color:var(--text)">target audience</strong> — each responds differently to channels</div></div>
+    <div class="how-step"><div class="step-num">2</div><div class="step-text">Allocate your <strong style="color:var(--text)">$10,000 round budget</strong> across available marketing channels</div></div>
+    <div class="how-step"><div class="step-num">3</div><div class="step-text">Review results: customers acquired, CAC, and what worked</div></div>
+    <div class="how-step"><div class="step-num">4</div><div class="step-text"><strong style="color:var(--text)">Hit milestones</strong> to unlock more powerful channels</div></div>
+    <div class="divider" style="margin:.9rem 0"></div>
+    <p style="margin:0;font-size:.8rem">Win condition: reach 5,000 customers while keeping average CAC below LTV ($120). You lose if you run out of rounds.</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="startGame()">Start game →</button>
+  </div>
+</div>
+
+<!-- ALLOCATE -->
+<div id="screen-allocate" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">
+    <div>
+      <h2 id="round-title" style="margin-bottom:.3rem">Round 1 of 8</h2>
+      <div class="round-dots" id="round-dots"></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:.2rem">CUSTOMERS</div>
+      <div class="mono" id="cust-count" style="font-size:1.1rem;font-weight:500">0 / 5,000</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+
+  <div class="metrics" id="metrics-bar">
+    <div class="metric"><div class="mlabel">Customers</div><div class="mval" id="m-cust">0</div></div>
+    <div class="metric"><div class="mlabel">Avg CAC</div><div class="mval" id="m-cac">—</div></div>
+    <div class="metric"><div class="mlabel">LTV</div><div class="mval" style="color:var(--teal)">$120</div></div>
+    <div class="metric"><div class="mlabel">Budget left</div><div class="mval" id="m-budget">$80k</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Target audience</h3>
+    <p style="font-size:.78rem;margin-bottom:.75rem">Audience fit multiplies channel effectiveness. Choose wisely.</p>
+    <div class="audience-grid" id="audience-grid"></div>
+  </div>
+
+  <div class="card">
+    <h3>Budget allocation</h3>
+    <div class="ch-grid" id="channel-grid"></div>
+    <div class="budget-footer">
+      <span class="budget-label-txt">Round budget</span>
+      <span class="budget-amount ok" id="budget-display">$0 / $10,000</span>
+    </div>
+  </div>
+
+  <div class="card" id="history-card" style="display:none">
+    <h3>Round history</h3>
+    <div id="history-bar"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="run-btn" onclick="runRound()" disabled>Run round →</button>
+    <button class="btn btn-sm" onclick="resetAllocation()">Reset sliders</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <h2 id="results-title">Round 1 results</h2>
+  <div id="feedback-area"></div>
+  <div class="card">
+    <h3>Channel breakdown</h3>
+    <div class="res-grid" id="channel-results"></div>
+  </div>
+  <div class="card">
+    <h3>Performance summary</h3>
+    <div class="metrics" id="results-metrics"></div>
+    <div class="insight-box" id="cac-insight"></div>
+  </div>
+  <div id="milestone-area"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="next-btn" onclick="nextRound()">Next round →</button>
+  </div>
+</div>
+
+<!-- END -->
+<div id="screen-end" class="screen">
+  <h2 id="end-title">Game over</h2>
+  <p id="end-subtitle" style="font-size:.95rem;margin-bottom:1.5rem"></p>
+  <div class="card" id="end-stats"></div>
+  <div class="card">
+    <h3>Key learnings</h3>
+    <div id="insights-list"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="restartGame()">Play again</button>
+  </div>
+</div>
+
+</div>
+<script>
+const AUDIENCES = [
+  {id:'gen-z',name:'Gen Z (18–24)',desc:'Social-native, price-sensitive',channels:{social:1.7,influencer:1.5,search:0.7,email:0.5,content:1.0,podcast:0.8,ooh:0.6,pr:0.9}},
+  {id:'millennial',name:'Millennials (25–40)',desc:'Research-driven, brand loyal',channels:{social:1.2,influencer:0.9,search:1.5,email:1.4,content:1.3,podcast:1.2,ooh:0.8,pr:1.1}},
+  {id:'professional',name:'Professionals (B2B)',desc:'ROI-focused, slow to convert',channels:{social:0.7,influencer:0.5,search:1.4,email:1.6,content:1.5,podcast:1.0,ooh:0.5,pr:1.4}},
+];
+const BASE_CHANNELS = [
+  {id:'social',name:'Social ads',costPer:18,baseCR:0.04,maxBudget:5000},
+  {id:'search',name:'Search (SEO/SEM)',costPer:25,baseCR:0.05,maxBudget:5000},
+  {id:'email',name:'Email campaigns',costPer:8,baseCR:0.06,maxBudget:3000},
+  {id:'content',name:'Content marketing',costPer:12,baseCR:0.035,maxBudget:3000},
+];
+const UNLOCK_CHANNELS = [
+  {id:'influencer',name:'Influencer marketing',costPer:35,baseCR:0.06,maxBudget:5000,unlock:500},
+  {id:'podcast',name:'Podcast sponsorship',costPer:30,baseCR:0.045,maxBudget:4000,unlock:1500},
+  {id:'ooh',name:'Out-of-home (OOH)',costPer:20,baseCR:0.025,maxBudget:4000,unlock:2500},
+  {id:'pr',name:'PR & media',costPer:40,baseCR:0.07,maxBudget:6000,unlock:4000},
+];
+const BUDGET_PER_ROUND=10000,MAX_ROUNDS=8,TARGET=5000,LTV=120;
+let state={};
+
+function startGame(){
+  state={round:1,totalCustomers:0,totalSpend:0,avgCAC:0,history:[],unlockedChannels:[],milestones:[],selectedAudience:null,allocation:{},saturation:{}};
+  BASE_CHANNELS.forEach(c=>state.saturation[c.id]=1.0);
+  UNLOCK_CHANNELS.forEach(c=>state.saturation[c.id]=1.0);
+  show('allocate');buildAllocateScreen();
+}
+function restartGame(){startGame();}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');window.scrollTo(0,0);}
+
+function availableChannels(){
+  let chs=[...BASE_CHANNELS];
+  UNLOCK_CHANNELS.forEach(uc=>{if(state.totalCustomers>=uc.unlock||state.unlockedChannels.includes(uc.id))chs.push(uc);});
+  return chs;
+}
+
+function buildAllocateScreen(){
+  document.getElementById('round-title').textContent=`Round ${state.round} of ${MAX_ROUNDS}`;
+  document.getElementById('cust-count').textContent=`${state.totalCustomers.toLocaleString()} / ${TARGET.toLocaleString()}`;
+  document.getElementById('prog-fill').style.width=Math.min(100,state.totalCustomers/TARGET*100)+'%';
+  document.getElementById('m-cust').textContent=state.totalCustomers.toLocaleString();
+  let cacEl=document.getElementById('m-cac');
+  cacEl.textContent=state.avgCAC?'$'+Math.round(state.avgCAC):'—';
+  cacEl.className='mval'+(state.avgCAC&&state.avgCAC<LTV?' good':state.avgCAC?' bad':'');
+  let budgetLeft=(MAX_ROUNDS-state.round+1)*BUDGET_PER_ROUND;
+  document.getElementById('m-budget').textContent='$'+Math.round(budgetLeft/1000)+'k';
+
+  let dots='';
+  for(let i=1;i<=MAX_ROUNDS;i++){let cls=i<state.round?'done':i===state.round?'current':'';dots+=`<div class="rdot ${cls}"></div>`;}
+  document.getElementById('round-dots').innerHTML=dots;
+
+  let ag='';
+  AUDIENCES.forEach(a=>{
+    let sel=state.selectedAudience===a.id?'selected':'';
+    ag+=`<div class="aud-card ${sel}" onclick="selectAudience('${a.id}')"><div class="aud-name">${a.name}</div><div class="aud-desc">${a.desc}</div></div>`;
+  });
+  document.getElementById('audience-grid').innerHTML=ag;
+
+  state.allocation={};
+  let chs=availableChannels();
+  let cg='';
+  chs.forEach(c=>{
+    state.allocation[c.id]=0;
+    let isNew=UNLOCK_CHANNELS.find(u=>u.id===c.id)&&!state.unlockedChannels.includes(c.id)&&state.totalCustomers>=UNLOCK_CHANNELS.find(u=>u.id===c.id)?.unlock;
+    let sat=state.saturation[c.id]||1.0;
+    let newBadge=isNew?'<span class="badge-new">new</span>':'';
+    let satBadge=sat<0.7?'<span class="badge-sat">saturated</span>':'';
+    cg+=`<div class="ch-card" id="ch-${c.id}">
+      <div class="ch-top">
+        <div>
+          <div class="ch-name">${c.name}${newBadge}${satBadge}</div>
+          <div class="ch-cost">~$${c.costPer} / customer</div>
+        </div>
+        <div class="ch-val" id="val-${c.id}">$0</div>
+      </div>
+      <input type="range" min="0" max="${c.maxBudget}" step="500" value="0" id="sl-${c.id}" oninput="updateAlloc('${c.id}',this.value)">
+      <div class="ch-labels"><span>$0</span><span>$${(c.maxBudget/1000).toFixed(0)}k</span></div>
+    </div>`;
+  });
+  document.getElementById('channel-grid').innerHTML=cg;
+
+  if(state.history.length>0){
+    document.getElementById('history-card').style.display='block';
+    let hb='';
+    state.history.forEach(h=>{
+      let col=h.cac<LTV?'var(--accent)':'var(--red)';
+      hb+=`<div class="hist-row"><div class="hist-dot" style="background:${col}"></div><span>Round ${h.round}: <strong style="color:var(--text)">${h.customers} customers</strong> · CAC $${Math.round(h.cac)} · Best: ${h.bestChannel}</span></div>`;
+    });
+    document.getElementById('history-bar').innerHTML=hb;
+  }
+  updateBudgetDisplay();
+}
+
+function selectAudience(id){
+  state.selectedAudience=id;
+  document.querySelectorAll('.aud-card').forEach((el,i)=>{el.classList.toggle('selected',AUDIENCES[i].id===id);});
+  updateBudgetDisplay();
+}
+
+function updateAlloc(id,val){
+  state.allocation[id]=parseInt(val);
+  document.getElementById('val-'+id).textContent='$'+parseInt(val).toLocaleString();
+  updateBudgetDisplay();
+}
+
+function updateBudgetDisplay(){
+  let total=Object.values(state.allocation).reduce((a,b)=>a+b,0);
+  let el=document.getElementById('budget-display');
+  el.textContent='$'+total.toLocaleString()+' / $'+BUDGET_PER_ROUND.toLocaleString();
+  el.className='budget-amount'+(total>BUDGET_PER_ROUND?' over':total>8000?' warn':' ok');
+  document.getElementById('run-btn').disabled=!(state.selectedAudience&&total>0&&total<=BUDGET_PER_ROUND);
+}
+
+function resetAllocation(){
+  availableChannels().forEach(c=>{
+    state.allocation[c.id]=0;
+    let sl=document.getElementById('sl-'+c.id);if(sl)sl.value=0;
+    let vl=document.getElementById('val-'+c.id);if(vl)vl.textContent='$0';
+  });
+  updateBudgetDisplay();
+}
+
+function runRound(){
+  let audience=AUDIENCES.find(a=>a.id===state.selectedAudience);
+  let chs=availableChannels();
+  let roundCustomers=0,roundSpend=0;
+  let channelResults=[],bestChannel=null,bestCount=0;
+
+  chs.forEach(c=>{
+    let alloc=state.allocation[c.id]||0;if(alloc===0)return;
+    let mult=audience.channels[c.id]||1.0;
+    let sat=state.saturation[c.id]||1.0;
+    let noise=0.82+Math.random()*0.36;
+    let cr=c.baseCR*mult*sat*noise;
+    let impressions=Math.round(alloc/(c.costPer*0.15));
+    let customers=Math.round(impressions*cr);
+    let cac=customers>0?alloc/customers:alloc;
+    roundCustomers+=customers;roundSpend+=alloc;
+    state.saturation[c.id]=Math.max(0.4,sat-0.09*(alloc/c.maxBudget));
+    channelResults.push({name:c.name,id:c.id,alloc,customers,cac,mult});
+    if(customers>bestCount){bestCount=customers;bestChannel=c.name;}
+  });
+
+  let roundCAC=roundCustomers>0?roundSpend/roundCustomers:roundSpend;
+  let viralBonus=0;
+  if(roundCustomers>280){viralBonus=Math.round(roundCustomers*0.15);state.totalCustomers+=viralBonus;}
+  state.totalCustomers+=roundCustomers;
+  state.totalSpend+=roundSpend;
+  state.avgCAC=state.totalSpend/Math.max(1,state.totalCustomers);
+
+  UNLOCK_CHANNELS.forEach(uc=>{if(state.totalCustomers>=uc.unlock&&!state.unlockedChannels.includes(uc.id))state.unlockedChannels.push(uc.id);});
+
+  state.history.push({round:state.round,customers:roundCustomers,cac:roundCAC,bestChannel:bestChannel||'—',viralBonus});
+
+  let newMilestones=[];
+  [{t:500,msg:'500 customers — Influencer channel unlocked!'},{t:1500,msg:'1,500 customers — Podcast sponsorship unlocked!'},{t:2500,msg:'2,500 customers — OOH advertising unlocked!'},{t:4000,msg:'4,000 customers — PR & media unlocked!'}].forEach(m=>{
+    if(state.totalCustomers>=m.t&&!state.milestones.includes(m.t)){state.milestones.push(m.t);newMilestones.push(m.msg);}
+  });
+
+  showResults(channelResults,roundCustomers,roundCAC,roundSpend,audience,newMilestones,viralBonus);
+}
+
+function showResults(crs,roundCust,roundCAC,roundSpend,audience,milestones,viralBonus){
+  show('results');
+  document.getElementById('results-title').textContent=`Round ${state.round} results`;
+
+  let fb='';
+  let type=roundCAC<LTV*0.8?'success':roundCAC<LTV?'warn':'danger';
+  let typeMsg=roundCAC<LTV*0.8?'Profitable round':'Marginal round — watch your CAC';
+  if(type==='danger')typeMsg='Overspending — CAC exceeds LTV';
+  let msg=type==='success'
+    ?`You acquired ${roundCust} customers at $${Math.round(roundCAC)} CAC — well below your $${LTV} LTV. This is sustainable growth.`
+    :type==='warn'
+    ?`$${Math.round(roundCAC)} CAC is close to your $${LTV} LTV. Profitable, but thin margins. Try channels with better audience fit.`
+    :`At $${Math.round(roundCAC)} CAC you're losing money per customer. Rethink your channel mix and audience targeting.`;
+  fb+=`<div class="fb-box ${type}"><div class="fb-title">${typeMsg}</div><p>${msg}</p></div>`;
+  if(viralBonus>0)fb+=`<div class="fb-box success"><div class="fb-title">Viral bonus! +${viralBonus} customers</div><p>Your campaign gained traction — word-of-mouth added ${viralBonus} extra customers at zero cost.</p></div>`;
+
+  let sorted=crs.filter(c=>c.customers>0).sort((a,b)=>b.customers-a.customers);
+  let bestFit=sorted[0],worstFit=crs.filter(c=>c.alloc>0).sort((a,b)=>a.customers-b.customers)[0];
+  if(bestFit&&worstFit&&bestFit.id!==worstFit.id)
+    fb+=`<div class="fb-box warn"><div class="fb-title">Channel–audience insight</div><p><strong>${bestFit.name}</strong> was your top performer for ${audience.name}. <strong>${worstFit.name}</strong> underperformed — consider reallocating that budget.</p></div>`;
+  document.getElementById('feedback-area').innerHTML=fb;
+
+  let cr='';
+  crs.forEach(c=>{
+    if(c.alloc===0)return;
+    let fitClass=c.mult>=1.3?'fit-great':c.mult>=1.0?'fit-ok':'fit-poor';
+    let fitLabel=c.mult>=1.3?'Great fit':c.mult>=1.0?'OK fit':'Poor fit';
+    cr+=`<div class="res-card"><div class="res-name">${c.name}</div><div class="res-val">${c.customers}</div><div class="res-sub">CAC $${Math.round(c.cac)}</div><div class="res-sub ${fitClass}">${fitLabel}</div></div>`;
+  });
+  if(!cr)cr='<div style="font-size:.8rem;color:var(--muted)">No spend this round.</div>';
+  document.getElementById('channel-results').innerHTML=cr;
+
+  document.getElementById('results-metrics').innerHTML=`
+    <div class="metric"><div class="mlabel">This round</div><div class="mval ${roundCust>0?'good':''}">${roundCust}</div></div>
+    <div class="metric"><div class="mlabel">Round CAC</div><div class="mval ${roundCAC<LTV?'good':'bad'}">$${Math.round(roundCAC)}</div></div>
+    <div class="metric"><div class="mlabel">Total customers</div><div class="mval">${state.totalCustomers.toLocaleString()}</div></div>
+    <div class="metric"><div class="mlabel">Cumul. CAC</div><div class="mval ${state.avgCAC<LTV?'good':'bad'}">$${Math.round(state.avgCAC)}</div></div>`;
+
+  let ins=state.avgCAC<LTV?`Your running average CAC ($${Math.round(state.avgCAC)}) is below LTV ($${LTV}) — you're growing sustainably.`:`Your running average CAC ($${Math.round(state.avgCAC)}) now exceeds LTV ($${LTV}). Continued overspending will hurt unit economics.`;
+  let satWarning=Object.entries(state.saturation).filter(([k,v])=>v<0.65&&state.allocation[k]>0);
+  if(satWarning.length>0)ins+=' Some channels are becoming saturated from overuse — diversify next round.';
+  document.getElementById('cac-insight').textContent=ins;
+
+  let ma='';
+  if(milestones.length>0){ma='<div class="card"><h3>Milestones unlocked</h3>';milestones.forEach(m=>ma+=`<span class="milestone-tag">${m}</span>`);ma+='</div>';}
+  document.getElementById('milestone-area').innerHTML=ma;
+
+  let nextBtn=document.getElementById('next-btn');
+  if(state.totalCustomers>=TARGET){nextBtn.textContent='See final results →';nextBtn.onclick=()=>endGame(true);}
+  else if(state.round>=MAX_ROUNDS){nextBtn.textContent='See final results →';nextBtn.onclick=()=>endGame(false);}
+  else{nextBtn.textContent=`Round ${state.round+1} →`;nextBtn.onclick=nextRound;}
+}
+
+function nextRound(){state.round++;show('allocate');buildAllocateScreen();}
+
+function endGame(won){
+  show('end');
+  document.getElementById('end-title').textContent=won?'You won! 🎯':'Game over';
+  document.getElementById('end-subtitle').textContent=won
+    ?`You reached ${state.totalCustomers.toLocaleString()} paying customers in ${state.round} rounds. LTV/CAC ratio: ${(LTV/Math.max(1,state.avgCAC)).toFixed(1)}x.`
+    :`You finished with ${state.totalCustomers.toLocaleString()} customers — ${TARGET-state.totalCustomers} short of the goal after ${MAX_ROUNDS} rounds.`;
+
+  let bestRound=[...state.history].sort((a,b)=>b.customers-a.customers)[0];
+  document.getElementById('end-stats').innerHTML=`<h3>Final stats</h3>
+    <div class="end-stat"><span class="ekey">Total customers</span><span class="eval">${state.totalCustomers.toLocaleString()}</span></div>
+    <div class="end-stat"><span class="ekey">Target</span><span class="eval">${TARGET.toLocaleString()}</span></div>
+    <div class="end-stat"><span class="ekey">Average CAC</span><span class="eval">$${Math.round(state.avgCAC)}</span></div>
+    <div class="end-stat"><span class="ekey">LTV</span><span class="eval">$${LTV}</span></div>
+    <div class="end-stat"><span class="ekey">LTV / CAC ratio</span><span class="eval">${(LTV/Math.max(1,state.avgCAC)).toFixed(2)}x</span></div>
+    <div class="end-stat"><span class="ekey">Total marketing spend</span><span class="eval">$${state.totalSpend.toLocaleString()}</span></div>
+    <div class="end-stat"><span class="ekey">Best round</span><span class="eval">Round ${bestRound?.round||'—'} (${bestRound?.customers||0} customers)</span></div>
+    <div class="end-stat"><span class="ekey">Channels unlocked</span><span class="eval">${state.unlockedChannels.length} / ${UNLOCK_CHANNELS.length}</span></div>`;
+
+  let insights=[];
+  if(state.avgCAC<LTV*0.7)insights.push('Excellent CAC efficiency. Your channel–audience matching was strong — you understood your ICP.');
+  else if(state.avgCAC<LTV)insights.push('CAC was profitable but not optimal. Tighter audience–channel matching could improve margins significantly.');
+  else insights.push('CAC exceeded LTV throughout. In a real startup this burn rate is unsustainable. Prioritise lower-cost, high-fit channels early.');
+  if(state.milestones.length>=3)insights.push('You unlocked most channels — milestone-based progression rewards disciplined early growth.');
+  else insights.push('Faster early growth unlocks more efficient channels like PR. Push for momentum in rounds 1–3 to access better options later.');
+  insights.push('No single channel is universally best. The channel–audience fit multiplier matters more than raw budget size.');
+  if(!won)insights.push('Hitting 5,000 in 8 rounds requires ~625 customers/round on average. Early momentum is critical — don\'t save budget for later rounds.');
+  if(state.history.some(h=>h.viralBonus>0))insights.push('You triggered viral bonuses — high-volume rounds generate word-of-mouth at zero additional CAC.');
+
+  document.getElementById('insights-list').innerHTML=insights.map(i=>`<div class="insight-li">${i}</div>`).join('');
+}
+</script>
+</body>
+</html>
