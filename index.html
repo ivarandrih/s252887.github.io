@@ -434,14 +434,14 @@ Use this feedback to refine your allocation in the next round.`
 <strong>Cumulative CAC</strong> — your average CAC across all rounds so far. This is the most important long-term metric.<br><br>
 The <strong>insight below</strong> gives a plain-language read on whether you're on a sustainable trajectory and any saturation warnings.`
   },
-  social: {icon:'📱',title:'Social ads',body:'Paid advertising on platforms like Instagram, TikTok, and Facebook. <strong>Cost:</strong> ~$18/customer. High reach, especially effective for Gen Z. Can saturate quickly if over-invested.'},
-  search: {icon:'🔍',title:'Search (SEO/SEM)',body:'Appears when people actively search for a product like yours — Google Ads or organic search ranking. <strong>Cost:</strong> ~$25/customer. High intent audience, works well for Millennials and B2B. Slower to scale.'},
-  email: {icon:'📧',title:'Email campaigns',body:'Targeted emails to prospect lists or existing leads. <strong>Cost:</strong> ~$8/customer — the lowest cost channel. Highly effective for Millennials and B2B professionals who prefer researched decisions. Limited by list size.'},
-  content: {icon:'✍️',title:'Content marketing',body:'Blog posts, videos, guides, and SEO content that attract customers organically. <strong>Cost:</strong> ~$12/customer. Builds trust over time. Works well for research-driven audiences (Millennials, B2B).'},
-  influencer: {icon:'⭐',title:'Influencer marketing',body:'Partnering with creators who promote your product to their followers. <strong>Cost:</strong> ~$35/customer. Very effective for Gen Z who trust peer recommendations. Premium cost but high conversion for the right audience.'},
-  podcast: {icon:'🎙️',title:'Podcast sponsorship',body:'Sponsoring episodes of relevant podcasts. <strong>Cost:</strong> ~$30/customer. Reaches engaged, loyal audiences — works well for Millennials and professionals. Credible, low-interruption format.'},
-  ooh: {icon:'🏙️',title:'Out-of-home (OOH)',body:'Physical advertising — billboards, transit ads, posters. <strong>Cost:</strong> ~$20/customer. Broad awareness play. Lower conversion rate than digital but builds brand recognition. Hard to target precisely.'},
-  pr: {icon:'📰',title:'PR & media',body:'Earned media coverage — press articles, journalist features, product reviews. <strong>Cost:</strong> ~$40/customer. Highest credibility, especially for B2B professionals. High cost but very high conversion when it lands.'},
+  social: {icon:'📱',title:'Social ads',body:'Paid advertising on platforms like Instagram, TikTok, and Facebook. <strong>Base CAC: ~$16/customer</strong> with a matched audience. High reach, especially effective for Gen Z. Can saturate quickly if over-invested.'},
+  search: {icon:'🔍',title:'Search (SEO/SEM)',body:'Appears when people actively search for a product like yours — Google Ads or organic search. <strong>Base CAC: ~$20/customer</strong>. High-intent audience, works well for Millennials and B2B. Good steady performer.'},
+  email: {icon:'📧',title:'Email campaigns',body:'Targeted emails to prospect lists or existing leads. <strong>Base CAC: ~$10/customer</strong> — the cheapest channel. Highly effective for Millennials and B2B professionals. Limited by list size, so max budget is lower.'},
+  content: {icon:'✍️',title:'Content marketing',body:'Blog posts, videos, guides that attract customers organically. <strong>Base CAC: ~$14/customer</strong>. Builds trust over time. Works well for research-driven audiences (Millennials, B2B).'},
+  influencer: {icon:'⭐',title:'Influencer marketing',body:'Partnering with creators who promote your product to their followers. <strong>Base CAC: ~$30/customer</strong>. Very effective for Gen Z who trust peer recommendations. Premium cost but high conversion for the right audience.'},
+  podcast: {icon:'🎙️',title:'Podcast sponsorship',body:'Sponsoring episodes of relevant podcasts. <strong>Base CAC: ~$28/customer</strong>. Reaches engaged, loyal audiences — works well for Millennials and professionals. Credible, low-interruption format.'},
+  ooh: {icon:'🏙️',title:'Out-of-home (OOH)',body:'Physical advertising — billboards, transit ads, posters. <strong>Base CAC: ~$25/customer</strong>. Broad awareness play, lower conversion rate than digital but builds brand recognition.'},
+  pr: {icon:'📰',title:'PR & media',body:'Earned media coverage — press articles, journalist features. <strong>Base CAC: ~$35/customer</strong>. Highest credibility, especially for B2B professionals. High cost per customer but very high trust when it lands.'},
 };
 
 function showModal(key) {
@@ -467,15 +467,16 @@ const AUDIENCES = [
 ];
 
 // ALL channels available from round 1
+// baseCac = base cost-per-customer at perfect audience fit + no saturation
 const ALL_CHANNELS = [
-  {id:'social',    name:'Social ads',           costPer:18, baseCR:0.04, maxBudget:5000},
-  {id:'search',    name:'Search (SEO/SEM)',      costPer:25, baseCR:0.05, maxBudget:5000},
-  {id:'email',     name:'Email campaigns',       costPer:8,  baseCR:0.06, maxBudget:3000},
-  {id:'content',   name:'Content marketing',     costPer:12, baseCR:0.035,maxBudget:3000},
-  {id:'influencer',name:'Influencer marketing',  costPer:35, baseCR:0.06, maxBudget:5000},
-  {id:'podcast',   name:'Podcast sponsorship',   costPer:30, baseCR:0.045,maxBudget:4000},
-  {id:'ooh',       name:'Out-of-home (OOH)',      costPer:20, baseCR:0.025,maxBudget:4000},
-  {id:'pr',        name:'PR & media',             costPer:40, baseCR:0.07, maxBudget:6000},
+  {id:'email',     name:'Email campaigns',       baseCac:10, maxBudget:3000},
+  {id:'content',   name:'Content marketing',     baseCac:14, maxBudget:3000},
+  {id:'social',    name:'Social ads',            baseCac:16, maxBudget:5000},
+  {id:'search',    name:'Search (SEO/SEM)',       baseCac:20, maxBudget:5000},
+  {id:'ooh',       name:'Out-of-home (OOH)',      baseCac:25, maxBudget:4000},
+  {id:'podcast',   name:'Podcast sponsorship',   baseCac:28, maxBudget:4000},
+  {id:'influencer',name:'Influencer marketing',  baseCac:30, maxBudget:5000},
+  {id:'pr',        name:'PR & media',             baseCac:35, maxBudget:6000},
 ];
 
 const BUDGET_PER_ROUND=10000, MAX_ROUNDS=8, TARGET=5000, LTV=120;
@@ -545,7 +546,7 @@ function buildAllocateScreen(){
             <button class="info-btn" onclick="showModal('${c.id}')">i</button>
             ${satBadge}
           </div>
-          <div class="ch-cost">~$${c.costPer} / customer</div>
+          <div class="ch-cost">base ~$${c.baseCac}/customer</div>
         </div>
         <div class="ch-val" id="val-${c.id}">$0</div>
       </div>
@@ -609,13 +610,14 @@ function runRound(){
     let alloc=state.allocation[c.id]||0; if(alloc===0) return;
     let mult=audience.channels[c.id]||1.0;
     let sat=state.saturation[c.id]||1.0;
-    let noise=0.82+Math.random()*0.36;
-    let cr=c.baseCR*mult*sat*noise;
-    let impressions=Math.round(alloc/(c.costPer*0.15));
-    let customers=Math.round(impressions*cr);
+    let noise=0.88+Math.random()*0.24; // noise 0.88–1.12
+    // effectiveCAC rises when audience fit is poor (low mult) or channel is saturated
+    let effectiveCAC=(c.baseCac/mult)/sat*noise;
+    let customers=Math.round(alloc/effectiveCAC);
     let cac=customers>0?alloc/customers:alloc;
     roundCustomers+=customers; roundSpend+=alloc;
-    state.saturation[c.id]=Math.max(0.4, sat-0.09*(alloc/c.maxBudget));
+    // saturation degrades with heavy use, recovers slightly when rested
+    state.saturation[c.id]=Math.max(0.55, sat-0.07*(alloc/c.maxBudget));
     channelResults.push({name:c.name,id:c.id,alloc,customers,cac,mult});
     if(customers>bestCount){bestCount=customers; bestChannel=c.name;}
   });
